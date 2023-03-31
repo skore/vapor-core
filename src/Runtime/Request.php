@@ -135,13 +135,15 @@ class Request
                     return count($values) === 1
                         ? [$key => $values[0]]
                         : [(substr($key, -2) == '[]' ? substr($key, 0, -2) : $key) => $values];
-                })->all()
+                })->all(),
+                '', '&', PHP_QUERY_RFC3986
             );
         }
 
         if (! isset($event['multiValueQueryStringParameters'])) {
             return http_build_query(
-                $event['queryStringParameters'] ?? []
+                $event['queryStringParameters'] ?? [],
+                '', '&', PHP_QUERY_RFC3986
             );
         }
 
@@ -161,7 +163,8 @@ class Request
                     return ! is_array($values) ? urldecode($values) : array_map(function ($value) {
                         return urldecode($value);
                     }, $values);
-                })->all()
+                })->all(),
+                '', '&', PHP_QUERY_RFC3986
         );
     }
 
