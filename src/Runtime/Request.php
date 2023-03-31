@@ -114,7 +114,7 @@ class Request
 
         return [
             empty($queryString) ? $uri : $uri.'?'.$queryString,
-            http_build_query($queryParameters, , '', '&', PHP_QUERY_RFC3986),
+            http_build_query($queryParameters, '', '&', PHP_QUERY_RFC3986),
         ];
     }
 
