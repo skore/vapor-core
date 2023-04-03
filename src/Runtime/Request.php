@@ -126,9 +126,6 @@ class Request
      */
     protected static function getQueryString(array $event)
     {
-        dump('$event["queryStringParameters"] =>');
-        dump($event['queryStringParameters'] ?? []);
-
         if (isset($event['version']) && $event['version'] === '2.0') {
             return static::buildQueryString(
                 collect($event['queryStringParameters'] ?? [])
@@ -198,7 +195,17 @@ class Request
      */
     protected static function buildQueryString(array $query)
     {
-        return http_build_query($query, '', '&', PHP_QUERY_RFC3986);
+        $resultQuery = [];
+
+        foreach ($query as $name => $value) {
+            $value = (array) $value;
+
+            array_walk_recursive($value, function($value) use (&$query, $name) {
+                $query[] = urlencode($name) . '=' . urlencode($value);
+            });
+        }
+
+        return implode('&', $resultQuery);
     }
 
     /**
