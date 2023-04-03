@@ -145,6 +145,8 @@ class Request
             );
         }
 
+        dump($event['multiValueQueryStringParameters']);
+
         return static::buildQueryString(
             collect($event['multiValueQueryStringParameters'] ?? [])
                 ->mapWithKeys(function ($values, $key) use ($event) {
