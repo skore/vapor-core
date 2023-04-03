@@ -146,6 +146,7 @@ class Request
         }
 
         dump($event['multiValueQueryStringParameters']);
+        dump($event['requestContext']['elb']);
 
         return static::buildQueryString(
             collect($event['multiValueQueryStringParameters'] ?? [])
