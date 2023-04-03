@@ -114,7 +114,7 @@ class Request
 
         return [
             empty($queryString) ? $uri : $uri.'?'.$queryString,
-            http_build_query($queryParameters, '', '&', PHP_QUERY_RFC3986),
+            static::buildQueryString($queryParameters),
         ];
     }
 
@@ -127,7 +127,7 @@ class Request
     protected static function getQueryString(array $event)
     {
         if (isset($event['version']) && $event['version'] === '2.0') {
-            return http_build_query(
+            return static::buildQueryString(
                 collect($event['queryStringParameters'] ?? [])
                 ->mapWithKeys(function ($value, $key) {
                     $values = explode(',', $value);
@@ -135,19 +135,17 @@ class Request
                     return count($values) === 1
                         ? [$key => $values[0]]
                         : [(substr($key, -2) == '[]' ? substr($key, 0, -2) : $key) => $values];
-                })->all(),
-                '', '&', PHP_QUERY_RFC3986
+                })->all()
             );
         }
 
         if (! isset($event['multiValueQueryStringParameters'])) {
-            return http_build_query(
-                $event['queryStringParameters'] ?? [],
-                '', '&', PHP_QUERY_RFC3986
+            return static::buildQueryString(
+                $event['queryStringParameters'] ?? []
             );
         }
 
-        return http_build_query(
+        return static::buildQueryString(
             collect($event['multiValueQueryStringParameters'] ?? [])
                 ->mapWithKeys(function ($values, $key) use ($event) {
                     $key = ! isset($event['requestContext']['elb']) ? $key : urldecode($key);
@@ -163,8 +161,7 @@ class Request
                     return ! is_array($values) ? urldecode($values) : array_map(function ($value) {
                         return urldecode($value);
                     }, $values);
-                })->all(),
-                '', '&', PHP_QUERY_RFC3986
+                })->all()
         );
     }
 
@@ -188,6 +185,17 @@ class Request
                     return [$name => Arr::last($headers)];
                 })->all(), CASE_LOWER
         );
+    }
+
+    /**
+     * Build query string from array of query parameters.
+     *
+     * @param array $query
+     * @return string
+     */
+    protected static function buildQueryString(array $query)
+    {
+        return http_build_query($query, '', '&', PHP_QUERY_RFC3986);
     }
 
     /**
