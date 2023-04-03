@@ -126,6 +126,9 @@ class Request
      */
     protected static function getQueryString(array $event)
     {
+        dump('$event["queryStringParameters"] =>');
+        dump($event['queryStringParameters'] ?? []);
+
         if (isset($event['version']) && $event['version'] === '2.0') {
             return static::buildQueryString(
                 collect($event['queryStringParameters'] ?? [])
@@ -144,9 +147,6 @@ class Request
                 $event['queryStringParameters'] ?? []
             );
         }
-
-        dump($event['multiValueQueryStringParameters']);
-        dump($event['requestContext']['elb']);
 
         return static::buildQueryString(
             collect($event['multiValueQueryStringParameters'] ?? [])
