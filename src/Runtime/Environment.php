@@ -145,11 +145,7 @@ class Environment
     {
         function_exists('__vapor_debug') && __vapor_debug('Decrypting environment variables.');
 
-        $this->console()->call('env:decrypt', [
-            '--env' => $this->environment,
-            '--path' => $this->writePath,
-            '--cipher' => $_ENV['LARAVEL_ENV_ENCRYPTION_CIPHER'] ?? null
-        ]);
+        $this->console()->call('env:decrypt', ['--env' => $this->environment, '--path' => $this->writePath]);
     }
 
     /**
