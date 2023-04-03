@@ -146,11 +146,7 @@ class Environment
     {
         fwrite(STDERR, 'Decrypting environment variables.'.PHP_EOL);
 
-        $this->console()->call('env:decrypt', [
-            '--env' => $this->environment,
-            '--path' => $this->writePath,
-            '--cipher' => $_ENV['LARAVEL_ENV_ENCRYPTION_CIPHER'] ?? null
-        ]);
+        $this->console()->call('env:decrypt', ['--env' => $this->environment, '--path' => $this->writePath]);
     }
 
     /**
