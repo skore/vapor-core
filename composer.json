@@ -1,11 +1,11 @@
 {
-    "name": "laravel/vapor-core",
+    "name": "skore-labs/vapor-core",
     "description": "The kernel and invocation handlers for Laravel Vapor",
     "keywords": [
         "laravel",
         "vapor"
     ],
-    "homepage": "https://github.com/laravel/vapor-core",
+    "homepage": "https://github.com/skore/vapor-core",
     "license": "MIT",
     "authors": [
         {
