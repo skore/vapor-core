@@ -100,10 +100,7 @@ class FpmRequestTest extends TestCase
         ]);
 
         $this->assertSame(
-            http_build_query([
-                'key1' => 'value1',
-                'key2' => ['value2', 'value3'],
-            ]),
+            'key1=value1&key2=value2&key2=value3',
             $request->serverVariables['QUERY_STRING']
         );
     }
