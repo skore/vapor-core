@@ -127,13 +127,13 @@ class Request
         if (isset($event['version']) && $event['version'] === '2.0') {
             return static::buildQueryString(
                 collect($event['queryStringParameters'] ?? [])
-                    ->mapWithKeys(function ($value, $key) {
+                ->mapWithKeys(function ($value, $key) {
                     $values = explode(',', $value);
 
                     return count($values) === 1
                         ? [$key => $values[0]]
                         : [(substr($key, -2) == '[]' ? substr($key, 0, -2) : $key) => $values];
-                    })->all()
+                })->all()
             );
         }
 
@@ -199,7 +199,7 @@ class Request
             $value = (array) $value;
 
             array_walk_recursive($value, function ($value) use (&$resultQuery, $key) {
-                $resultQuery[] = urlencode($key) . '=' . urlencode($value);
+                $resultQuery[] = urlencode($key).'='.urlencode($value);
             });
         }
 
