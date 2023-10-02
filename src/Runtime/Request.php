@@ -188,6 +188,27 @@ class Request
     }
 
     /**
+     * Build query string from array of query parameters.
+     *
+     * @param array $query
+     * @return string
+     */
+    protected static function buildQueryString(array $query)
+    {
+        $resultQuery = [];
+
+        foreach ($query as $key => $value) {
+            $value = (array) $value;
+
+            array_walk_recursive($value, function ($value) use (&$resultQuery, $key) {
+                $resultQuery[] = urlencode($key).'='.urlencode($value);
+            });
+        }
+
+        return implode('&', $resultQuery);
+    }
+
+    /**
      * Get the request body from the event.
      *
      * @param  array  $event
