@@ -110,11 +110,9 @@ class Request
 
         $queryString = self::getQueryString($event);
 
-        parse_str($queryString, $queryParameters);
-
         return [
             empty($queryString) ? $uri : $uri.'?'.$queryString,
-            http_build_query($queryParameters),
+            $queryString,
         ];
     }
 
@@ -127,7 +125,7 @@ class Request
     protected static function getQueryString(array $event)
     {
         if (isset($event['version']) && $event['version'] === '2.0') {
-            return http_build_query(
+            return self::buildQueryString(
                 collect($event['queryStringParameters'] ?? [])
                 ->mapWithKeys(function ($value, $key) {
                     $values = explode(',', $value);
@@ -140,12 +138,12 @@ class Request
         }
 
         if (! isset($event['multiValueQueryStringParameters'])) {
-            return http_build_query(
+            return self::buildQueryString(
                 $event['queryStringParameters'] ?? []
             );
         }
 
-        return http_build_query(
+        return self::buildQueryString(
             collect($event['multiValueQueryStringParameters'] ?? [])
                 ->mapWithKeys(function ($values, $key) use ($event) {
                     $key = ! isset($event['requestContext']['elb']) ? $key : urldecode($key);
