@@ -1,11 +1,11 @@
 {
-    "name": "laravel/vapor-core",
-    "description": "The kernel and invokation handlers for Laravel Vapor",
+    "name": "skore-labs/vapor-core",
+    "description": "The kernel and invocation handlers for Laravel Vapor",
     "keywords": [
         "laravel",
         "vapor"
     ],
-    "homepage": "https://github.com/laravel/vapor-core",
+    "homepage": "https://github.com/skore/vapor-core",
     "license": "MIT",
     "authors": [
         {
@@ -16,6 +16,8 @@
     "require": {
         "php": "^7.2|^8.0",
         "aws/aws-sdk-php": "^3.80",
+        "psr/http-message": "^1.0",
+        "guzzlehttp/promises": "^1.4.0",
         "guzzlehttp/guzzle": "^6.3|^7.0",
         "hollodotme/fast-cgi-client": "^3.0",
         "illuminate/container": "^6.0|^7.0|^8.0|^9.0|^10.0",
@@ -37,7 +39,10 @@
     "autoload": {
         "psr-4": {
             "Laravel\\Vapor\\": "src"
-        }
+        },
+        "files": [
+            "src/debug.php"
+        ]
     },
     "autoload-dev": {
         "psr-4": {
@@ -54,7 +59,10 @@
         "laravel": {
             "providers": [
                 "Laravel\\Vapor\\VaporServiceProvider"
-            ]
+            ],
+            "aliases": {
+                "Vapor": "Laravel\\Vapor\\Vapor"
+            }
         }
     },
     "config": {

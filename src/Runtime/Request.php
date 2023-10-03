@@ -110,11 +110,9 @@ class Request
 
         $queryString = self::getQueryString($event);
 
-        parse_str($queryString, $queryParameters);
-
         return [
             empty($queryString) ? $uri : $uri.'?'.$queryString,
-            http_build_query($queryParameters, , '', '&', PHP_QUERY_RFC3986),
+            $queryString,
         ];
     }
 
@@ -127,25 +125,25 @@ class Request
     protected static function getQueryString(array $event)
     {
         if (isset($event['version']) && $event['version'] === '2.0') {
-            return http_build_query(
+            return static::buildQueryString(
                 collect($event['queryStringParameters'] ?? [])
-                ->mapWithKeys(function ($value, $key) {
+                    ->mapWithKeys(function ($value, $key) {
                     $values = explode(',', $value);
 
                     return count($values) === 1
                         ? [$key => $values[0]]
                         : [(substr($key, -2) == '[]' ? substr($key, 0, -2) : $key) => $values];
-                })->all()
+                    })->all()
             );
         }
 
         if (! isset($event['multiValueQueryStringParameters'])) {
-            return http_build_query(
+            return static::buildQueryString(
                 $event['queryStringParameters'] ?? []
             );
         }
 
-        return http_build_query(
+        return static::buildQueryString(
             collect($event['multiValueQueryStringParameters'] ?? [])
                 ->mapWithKeys(function ($values, $key) use ($event) {
                     $key = ! isset($event['requestContext']['elb']) ? $key : urldecode($key);
@@ -185,6 +183,27 @@ class Request
                     return [$name => Arr::last($headers)];
                 })->all(), CASE_LOWER
         );
+    }
+
+    /**
+     * Build query string from array of query parameters.
+     *
+     * @param array $query
+     * @return string
+     */
+    protected static function buildQueryString(array $query)
+    {
+        $resultQuery = [];
+
+        foreach ($query as $key => $value) {
+            $value = (array) $value;
+
+            array_walk_recursive($value, function ($value) use (&$resultQuery, $key) {
+                $resultQuery[] = urlencode($key) . '=' . urlencode($value);
+            });
+        }
+
+        return implode('&', $resultQuery);
     }
 
     /**
